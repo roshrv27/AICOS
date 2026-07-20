@@ -1,0 +1,44 @@
+application:
+  name: AICOS
+  debug: false
+  data_directory: data
+logging:
+  level: INFO
+  format: json
+  console_enabled: true
+  file_enabled: true
+  file_path: data/logs/aicos.log
+  max_bytes: 10485760
+  backup_count: 5
+sqlite:
+  path: data/aicos.db
+  timeout_seconds: 30
+  wal_enabled: true
+chromadb:
+  host: localhost
+  port: 8000
+  persist_directory: data/chroma
+  use_http: false
+ollama:
+  enabled: true
+  base_url: http://localhost:11434
+  timeout_seconds: 120
+  default_model: null
+openrouter:
+  enabled: false
+  base_url: https://openrouter.ai/api/v1
+  api_key: null
+  timeout_seconds: 120
+  default_model: null
+mcp:
+  enabled: true
+  configuration_directory: config/mcp
+  request_timeout_seconds: 30
+scheduler:
+  enabled: true
+  timezone: UTC
+  max_concurrent_jobs: 4
+ui:
+  host: 127.0.0.1
+  port: 3000
+  allow_remote_access: false

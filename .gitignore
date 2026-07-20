@@ -32,3 +32,4 @@ htmlcov/
 data/raw/
 data/processed/
 data/uploads/
+data/logs/
