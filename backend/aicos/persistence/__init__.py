@@ -35,6 +35,18 @@ from .models import (
 from .repositories import REPOSITORY_MIGRATIONS, register_repositories
 from .transaction import TransactionManager
 from .unit_of_work import PersistenceUnitOfWork
+from .vector_store import (
+    ChromaDBVectorStore,
+    CollectionError,
+    CollectionManager,
+    DocumentError,
+    EmbeddingDocument,
+    SearchError,
+    SearchResult,
+    VectorStoreError,
+    VectorStorePort,
+    register_vector_store,
+)
 
 if TYPE_CHECKING:
     from ..core.di import Container
@@ -42,10 +54,15 @@ if TYPE_CHECKING:
 
 
 __all__ = [
+    "ChromaDBVectorStore",
+    "CollectionError",
+    "CollectionManager",
     "DatabaseConnectionError",
     "DatabaseInfo",
     "DatabaseManager",
     "DatabasePort",
+    "DocumentError",
+    "EmbeddingDocument",
     "HistoryEntryData",
     "HistoryRepositoryPort",
     "Migration",
@@ -58,17 +75,22 @@ __all__ = [
     "ProgressData",
     "ProgressRepositoryPort",
     "REPOSITORY_MIGRATIONS",
-    "SQLiteConnectionFactory",
+    "SearchError",
+    "SearchResult",
     "SettingData",
     "SettingsRepositoryPort",
+    "SQLiteConnectionFactory",
     "TopicData",
     "TopicRepositoryPort",
     "TransactionError",
     "TransactionManager",
     "TransactionManagerPort",
     "UnitOfWorkPort",
+    "VectorStoreError",
+    "VectorStorePort",
     "register_persistence",
     "register_repositories",
+    "register_vector_store",
 ]
 
 
@@ -96,3 +118,5 @@ def register_persistence(container: Container, settings: Settings) -> None:
         lambda: PersistenceUnitOfWork(container.resolve(TransactionManager)),
         lifetime=ServiceLifetime.TRANSIENT,
     )
+    register_repositories(container, settings)
+    register_vector_store(container, settings)

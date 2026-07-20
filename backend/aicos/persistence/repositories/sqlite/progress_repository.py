@@ -11,11 +11,15 @@ class SQLiteProgressRepository(BaseRepository):
 
     def get_by_topic(self, topic_id: str) -> ProgressData | None:
         row = self._fetchone("SELECT * FROM progress WHERE topic_id = ?", (topic_id,))
-        return _row_to_progress(row) if row else None
+        result = _row_to_progress(row) if row else None
+        self._log_operation("get_by_topic", rows_affected=1 if result else 0)
+        return result
 
     def get_all(self) -> list[ProgressData]:
         rows = self._fetchall("SELECT * FROM progress")
-        return [_row_to_progress(r) for r in rows]
+        result = [_row_to_progress(r) for r in rows]
+        self._log_operation("get_all", rows_affected=len(result))
+        return result
 
     def upsert(self, progress: ProgressData) -> None:
         self._execute(
@@ -36,17 +40,24 @@ class SQLiteProgressRepository(BaseRepository):
                 json_dumps(progress.metadata),
             ),
         )
+        self._log_operation("upsert", rows_affected=1)
 
     def delete_by_topic(self, topic_id: str) -> bool:
-        return self._rowcount("DELETE FROM progress WHERE topic_id = ?", (topic_id,)) > 0
+        affected = self._rowcount("DELETE FROM progress WHERE topic_id = ?", (topic_id,))
+        self._log_operation("delete_by_topic", rows_affected=affected)
+        return affected > 0
 
     def count(self) -> int:
         row = self._fetchone("SELECT COUNT(*) AS cnt FROM progress")
-        return row["cnt"] if row else 0
+        result = row["cnt"] if row else 0
+        self._log_operation("count")
+        return result
 
     def get_completed_count(self) -> int:
         row = self._fetchone("SELECT COUNT(*) AS cnt FROM progress WHERE status = 'completed'")
-        return row["cnt"] if row else 0
+        result = row["cnt"] if row else 0
+        self._log_operation("get_completed_count")
+        return result
 
 
 def _row_to_progress(row: object) -> ProgressData:

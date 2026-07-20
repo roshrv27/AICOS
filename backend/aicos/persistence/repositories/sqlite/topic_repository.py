@@ -11,15 +11,21 @@ class SQLiteTopicRepository(BaseRepository):
 
     def get_all(self) -> list[TopicData]:
         rows = self._fetchall("SELECT * FROM topics ORDER BY `order` ASC")
-        return [_row_to_topic(r) for r in rows]
+        result = [_row_to_topic(r) for r in rows]
+        self._log_operation("get_all", rows_affected=len(result))
+        return result
 
     def get_by_id(self, topic_id: str) -> TopicData | None:
         row = self._fetchone("SELECT * FROM topics WHERE id = ?", (topic_id,))
-        return _row_to_topic(row) if row else None
+        result = _row_to_topic(row) if row else None
+        self._log_operation("get_by_id", rows_affected=1 if result else 0)
+        return result
 
     def get_by_category(self, category: str) -> list[TopicData]:
         rows = self._fetchall("SELECT * FROM topics WHERE category = ? ORDER BY `order` ASC", (category,))
-        return [_row_to_topic(r) for r in rows]
+        result = [_row_to_topic(r) for r in rows]
+        self._log_operation("get_by_category", rows_affected=len(result))
+        return result
 
     def upsert(self, topic: TopicData) -> None:
         self._execute(
@@ -47,13 +53,18 @@ class SQLiteTopicRepository(BaseRepository):
                 topic.updated_at,
             ),
         )
+        self._log_operation("upsert", rows_affected=1)
 
     def delete(self, topic_id: str) -> bool:
-        return self._rowcount("DELETE FROM topics WHERE id = ?", (topic_id,)) > 0
+        affected = self._rowcount("DELETE FROM topics WHERE id = ?", (topic_id,))
+        self._log_operation("delete", rows_affected=affected)
+        return affected > 0
 
     def count(self) -> int:
         row = self._fetchone("SELECT COUNT(*) AS cnt FROM topics")
-        return row["cnt"] if row else 0
+        result = row["cnt"] if row else 0
+        self._log_operation("count")
+        return result
 
 
 def _row_to_topic(row: object) -> TopicData:

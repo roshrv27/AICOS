@@ -542,5 +542,31 @@ class TestRepositoryPersistenceIntegration(unittest.TestCase):
         db.close()
 
 
+# ── DI + PersistenceUnitOfWork integration ──────────────────────────
+
+
+class TestRepositoryDIAndUnitOfWorkIntegration(unittest.TestCase):
+    def test_resolve_repository_and_commit_through_uow(self) -> None:
+        from backend.aicos.core.di import Container
+        from backend.aicos.persistence import PersistenceUnitOfWork
+
+        container = Container()
+        settings = Settings(config_dir="missing-config")
+        settings.sqlite.path = ":memory:"
+        register_persistence(container, settings)
+
+        settings_repo = container.resolve(SettingsRepositoryPort)
+        self.assertIsNotNone(settings_repo)
+
+        uow = container.resolve(PersistenceUnitOfWork)
+        with uow:
+            settings_repo.set("lang", "en")
+            settings_repo.set("theme", "light")
+
+        self.assertEqual(settings_repo.get("lang").value, "en")
+        self.assertEqual(settings_repo.get("theme").value, "light")
+        self.assertEqual(settings_repo.count(), 2)
+
+
 if __name__ == "__main__":
     unittest.main()

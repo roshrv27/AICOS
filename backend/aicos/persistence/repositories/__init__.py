@@ -100,13 +100,13 @@ __all__ = [
 
 
 def register_repositories(container: Container, settings: Settings) -> None:
-    from ..unit_of_work import PersistenceUnitOfWork
     """Register repository implementations in the DI container.
 
     Each repository is registered as transient under both its concrete
     type and its protocol interface so that consumers may depend on
     either.
     """
+    from ..unit_of_work import PersistenceUnitOfWork
 
     def _factory(
         repo_cls: type[SQLiteTopicRepository | SQLiteProgressRepository | SQLiteSettingsRepository | SQLiteHistoryRepository],
