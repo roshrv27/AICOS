@@ -24,6 +24,7 @@ ollama:
   base_url: http://localhost:11434
   timeout_seconds: 120
   default_model: null
+  embedding_model: Qwen3-Embedding:0.6B
 openrouter:
   enabled: false
   base_url: https://openrouter.ai/api/v1

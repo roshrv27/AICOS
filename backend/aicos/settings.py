@@ -77,6 +77,7 @@ class OllamaConfig(BaseModel):
     base_url: AnyHttpUrl = "http://localhost:11434"
     timeout_seconds: int = Field(default=120, gt=0)
     default_model: str | None = None
+    embedding_model: str = "Qwen3-Embedding:0.6B"
 
 
 class OpenRouterConfig(BaseModel):
