@@ -35,6 +35,23 @@ mcp:
   enabled: true
   configuration_directory: config/mcp
   request_timeout_seconds: 30
+knowledge:
+  chunk_size: 1000
+  chunk_overlap: 200
+  supported_extensions:
+    - .txt
+    - .md
+    - .pdf
+  default_collection: knowledge
+retrieval:
+  default_top_k: 10
+  max_top_k: 100
+  similarity_threshold: 0.0
+rag:
+  default_top_k: 10
+  max_context_chunks: 5
+  max_prompt_tokens: 4096
+  default_system_prompt: "You are a helpful AI assistant. Answer the user's question based on the provided context. If the context does not contain enough information to answer, say so."
 scheduler:
   enabled: true
   timezone: UTC

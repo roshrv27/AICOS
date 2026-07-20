@@ -112,6 +112,44 @@ class SchedulerConfig(BaseModel):
     max_concurrent_jobs: int = Field(default=4, ge=1)
 
 
+class KnowledgeIngestionConfig(BaseModel):
+    """Knowledge ingestion settings."""
+
+    model_config = {"extra": "forbid"}
+
+    chunk_size: int = Field(default=1000, gt=0)
+    chunk_overlap: int = Field(default=200, ge=0)
+    supported_extensions: list[str] = Field(
+        default=[".txt", ".md", ".pdf"],
+    )
+    default_collection: str = "knowledge"
+
+
+class RetrievalConfig(BaseModel):
+    """Semantic retrieval settings."""
+
+    model_config = {"extra": "forbid"}
+
+    default_top_k: int = Field(default=10, gt=0)
+    max_top_k: int = Field(default=100, gt=0)
+    similarity_threshold: float = Field(default=0.0, ge=0.0, le=1.0)
+
+
+class RAGConfig(BaseModel):
+    """RAG orchestration settings."""
+
+    model_config = {"extra": "forbid"}
+
+    default_top_k: int = Field(default=10, gt=0)
+    max_context_chunks: int = Field(default=5, gt=0)
+    max_prompt_tokens: int = Field(default=4096, gt=0)
+    default_system_prompt: str = Field(
+        default="You are a helpful AI assistant. Answer the user's question based "
+        "on the provided context. If the context does not contain enough information "
+        "to answer, say so."
+    )
+
+
 class UIConfig(BaseModel):
     """User-interface service settings."""
 
@@ -172,6 +210,9 @@ class Settings(BaseSettings):
     ollama: OllamaConfig = Field(default_factory=OllamaConfig)
     openrouter: OpenRouterConfig = Field(default_factory=OpenRouterConfig)
     mcp: MCPConfig = Field(default_factory=MCPConfig)
+    knowledge: KnowledgeIngestionConfig = Field(default_factory=KnowledgeIngestionConfig)
+    retrieval: RetrievalConfig = Field(default_factory=RetrievalConfig)
+    rag: RAGConfig = Field(default_factory=RAGConfig)
     scheduler: SchedulerConfig = Field(default_factory=SchedulerConfig)
     ui: UIConfig = Field(default_factory=UIConfig)
 
